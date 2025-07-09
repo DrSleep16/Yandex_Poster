@@ -1,3 +1,47 @@
 from django.shortcuts import render
+from django.http import JsonResponse, Http404
+from .models import Place, PlaceImage
 
-# Create your views here.
+
+def main_page(request):
+    features = []
+    for place in Place.objects.all():
+        features.append({
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [place.lng, place.lat]
+            },
+            "properties": {
+                "title": place.title,
+                "placeId": place.id,
+                "detailsUrl": f"/places/{place.id}/"
+            }
+        })
+    geojson = {
+        "type": "FeatureCollection",
+        "features": features
+    }
+    return render(request, "index.html", {"geojson": geojson})
+
+
+def place_details(request, place_id):
+    try:
+        place = Place.objects.get(id=place_id)
+    except Place.DoesNotExist:
+        raise Http404("Place not found")
+
+    images = PlaceImage.objects.filter(place=place).order_by('order')
+    imgs = [img.image.url for img in images]
+
+    data = {
+        "title": place.title,
+        "imgs": imgs,
+        "description_short": place.short_description,
+        "description_long": place.long_description,
+        "coordinates": {
+            "lat": place.lat,
+            "lng": place.lng,
+        }
+    }
+    return JsonResponse(data)
