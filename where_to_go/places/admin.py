@@ -1,29 +1,30 @@
 from django.contrib import admin
 from .models import Place, PlaceImage
+from adminsortable2.admin import SortableInlineAdminMixin, SortableAdminMixin, SortableAdminBase
 
 
-class PlaceImageInline(admin.TabularInline):
+class PlaceImageInline(SortableInlineAdminMixin, admin.TabularInline):
     model = PlaceImage
     extra = 1
     readonly_fields = ['get_preview']
     fieldsets = (
         (None, {
-            'fields': ('image', 'get_preview', 'order')
+            'fields': ('image', 'get_preview')
         }),
     )
 
 
 @admin.register(Place)
-class PlaceAdmin(admin.ModelAdmin):
+class PlaceAdmin(SortableAdminBase, admin.ModelAdmin):
     inlines = [PlaceImageInline]
 
 
 @admin.register(PlaceImage)
-class PlaceImageAdmin(admin.ModelAdmin):
-    list_display = ['place', 'order', 'get_preview']
+class PlaceImageAdmin(SortableAdminMixin, admin.ModelAdmin):
+    list_display = ['place', 'get_preview']
     readonly_fields = ['get_preview']
     fieldsets = (
         (None, {
-            'fields': ('place', 'order', 'image', 'get_preview')
+            'fields': ('place', 'image', 'get_preview')
         }),
     )
