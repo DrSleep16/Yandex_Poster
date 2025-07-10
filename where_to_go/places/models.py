@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.html import format_html
 
 
 class Place(models.Model):
@@ -13,12 +14,19 @@ class Place(models.Model):
 
 
 class PlaceImage(models.Model):
-  place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='images', verbose_name='Место')
-  image = models.ImageField(upload_to='places_images', verbose_name='Картинка')
-  order = models.PositiveIntegerField(default=0, verbose_name='Порядок')
+    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='images', verbose_name='Место')
+    image = models.ImageField(upload_to='places_images', verbose_name='Картинка')
+    order = models.PositiveIntegerField(default=0, verbose_name='Порядок')
 
-  class Meta:
-    ordering = ['order']
+    def get_preview(self):
+        if self.image:
+            return format_html('<img src="{}" style="max-height: 200px;" />', self.image.url)
+        return ""
 
-  def __str__(self):
-    return f"{self.place.title} - {self.order}"
+    get_preview.short_description = "Превью"
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"{self.place.title} - {self.order}"
