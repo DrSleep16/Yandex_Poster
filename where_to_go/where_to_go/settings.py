@@ -1,15 +1,30 @@
 import os
 
 from pathlib import Path
+from environs import Env
 
+
+env = Env()
+env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-l=xatnakjh6rjis9xfgo3_9-irtm=p_8%^*d5*b+#&@m-jo!v('
+SECRET_KEY = env.str("SECRET_KEY")
 
-DEBUG = True
+DEBUG = env.bool("DEBUG", False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", [])
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': str(BASE_DIR / env.str("DB_NAME", "db.sqlite3")),
+        'USER': env.str("DB_USER"),
+        'PASSWORD': env.str("DB_PASSWORD"),
+        'HOST': env.str("DB_HOST", "localhost"),
+        'PORT': env.str("DB_PORT", "8000"),
+    }
+}
 
 
 INSTALLED_APPS = [
@@ -53,13 +68,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'where_to_go.wsgi.application'
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
