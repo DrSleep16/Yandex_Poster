@@ -1,4 +1,6 @@
 import json
+import logging
+import time
 
 import requests
 from django.core.exceptions import MultipleObjectsReturned
@@ -6,6 +8,9 @@ from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 
 from places.models import Place, PlaceImage
+
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -45,8 +50,14 @@ class Command(BaseCommand):
             return
 
         for idx, img_url in enumerate(payload.get('imgs', []), start=1):
-            img_response = requests.get(img_url)
-            img_response.raise_for_status()
+            try:
+                img_response = requests.get(img_url)
+                img_response.raise_for_status()
+            except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as err:
+                logger.error(f'Не удалось загрузить {img_url}: {err}')
+                time.sleep(1)
+                continue
+
             img_name = img_url.split('/')[-1]
             PlaceImage.objects.create(
                 place=place,
