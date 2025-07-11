@@ -3,6 +3,10 @@ from django.utils.html import format_html
 from tinymce.models import HTMLField
 
 
+MAX_HEIGHT = 200
+MAX_WIDTH = 300
+
+
 class Place(models.Model):
     title = models.CharField(max_length=200, verbose_name='Название')
     short_description = HTMLField('Короткое описание', blank=True, null=True)
@@ -21,7 +25,7 @@ class PlaceImage(models.Model):
 
     def get_preview(self):
         if self.image:
-            return format_html('<img src="{}" style="max-height: 200px; max-width: 300px;" />', self.image.url)
+            return format_html('<img src="{}" style="max-height: {}px; max-width: {}px;" />', self.image.url, MAX_HEIGHT, MAX_WIDTH)
         return ""
 
     get_preview.short_description = "Превью"
