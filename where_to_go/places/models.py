@@ -28,10 +28,10 @@ class PlaceImage(models.Model):
             return format_html('<img src="{}" style="max-height: {}px; max-width: {}px;" />', self.image.url, MAX_HEIGHT, MAX_WIDTH)
         return ""
 
-    get_preview.short_description = "Превью"
+    get_preview.short_description = 'Превью'
 
     class Meta:
         ordering = ['order']
 
     def __str__(self):
-        return f"{self.place.title} - {self.order}"
+        return f'{self.place.title} - {self.order}'
