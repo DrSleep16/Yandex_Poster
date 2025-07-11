@@ -30,7 +30,7 @@ def main_page(request):
 def place_details(request, place_id):
     place = get_object_or_404(Place, id=place_id)
 
-    images = PlaceImage.objects.filter(place=place).order_by('order')
+    images = place.images.order_by('order')
     imgs = [img.image.url for img in images]
 
     data = {
