@@ -1,6 +1,7 @@
 import json
 
 import requests
+from django.core.exceptions import MultipleObjectsReturned
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 
@@ -26,15 +27,22 @@ class Command(BaseCommand):
             with open(json_url, 'r', encoding='utf-8') as f:
                 payload = json.load(f)
 
-        place, created = Place.objects.get_or_create(
-            title=payload['title'],
-            defaults={
-                'short_description': payload.get('description_short', ''),
-                'long_description': payload.get('description_long', ''),
-                'lat': payload['coordinates']['lat'],
-                'lng': payload['coordinates']['lng'],
-            }
-        )
+        try:
+            place, created = Place.objects.get_or_create(
+                title=payload['title'],
+                defaults={
+                    'short_description': payload.get('description_short', ''),
+                    'long_description': payload.get('description_long', ''),
+                    'lat': payload['coordinates']['lat'],
+                    'lng': payload['coordinates']['lng'],
+                }
+            )
+        except MultipleObjectsReturned:
+            self.stdout.write(self.style.ERROR(
+                f'Найдено несколько мест с названием "{payload["title"]}". '
+                'Проверьте уникальность названий!'
+            ))
+            return
 
         if not created:
             place.short_description = payload.get('description_short', '')

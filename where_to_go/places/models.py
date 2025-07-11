@@ -8,7 +8,7 @@ MAX_WIDTH = 300
 
 
 class Place(models.Model):
-    title = models.CharField(max_length=200, verbose_name='Название')
+    title = models.CharField(max_length=200, verbose_name='Название', unique=True)
     short_description = HTMLField('Короткое описание', blank=True, null=True)
     long_description = HTMLField('Длинное описание', blank=True, null=True)
     lng = models.FloatField(verbose_name='Долгота')
