@@ -48,10 +48,10 @@ class Command(BaseCommand):
             img_response = requests.get(img_url)
             img_response.raise_for_status()
             img_name = img_url.split('/')[-1]
-            image = PlaceImage(
+            PlaceImage.objects.create(
                 place=place,
-                order=idx
+                order=idx,
+                image=ContentFile(img_response.content, name=img_name)
             )
-            image.image.save(img_name, ContentFile(img_response.content), save=True)
 
         self.stdout.write(self.style.SUCCESS(f'Место "{place.title}" успешно загружено!'))
