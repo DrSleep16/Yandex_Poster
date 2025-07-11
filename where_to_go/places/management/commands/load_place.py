@@ -21,29 +21,29 @@ class Command(BaseCommand):
         if json_url.startswith('http'):
             response = requests.get(json_url)
             response.raise_for_status()
-            data = response.json()
+            payload = response.json()
         else:
             with open(json_url, 'r', encoding='utf-8') as f:
-                data = json.load(f)
+                payload = json.load(f)
 
         place, created = Place.objects.get_or_create(
-            title=data['title'],
+            title=payload['title'],
             defaults={
-                'short_description': data.get('description_short', ''),
-                'long_description': data.get('description_long', ''),
-                'lat': data['coordinates']['lat'],
-                'lng': data['coordinates']['lng'],
+                'short_description': payload.get('description_short', ''),
+                'long_description': payload.get('description_long', ''),
+                'lat': payload['coordinates']['lat'],
+                'lng': payload['coordinates']['lng'],
             }
         )
 
         if not created:
-            place.short_description = data.get('description_short', '')
-            place.long_description = data.get('description_long', '')
-            place.lat = data['coordinates']['lat']
-            place.lng = data['coordinates']['lng']
+            place.short_description = payload.get('description_short', '')
+            place.long_description = payload.get('description_long', '')
+            place.lat = payload['coordinates']['lat']
+            place.lng = payload['coordinates']['lng']
             place.save()
 
-        for idx, img_url in enumerate(data.get('imgs', []), start=1):
+        for idx, img_url in enumerate(payload.get('imgs', []), start=1):
             img_response = requests.get(img_url)
             img_response.raise_for_status()
             img_name = img_url.split('/')[-1]
