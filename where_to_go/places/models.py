@@ -17,7 +17,7 @@ class Place(models.Model):
 class PlaceImage(models.Model):
     place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='images', verbose_name='Место')
     image = models.ImageField(upload_to='places_images', verbose_name='Картинка')
-    order = models.PositiveIntegerField(default=0, verbose_name='Порядок')
+    order = models.PositiveIntegerField(default=0, verbose_name='Порядок', db_index=True)
 
     def get_preview(self):
         if self.image:
