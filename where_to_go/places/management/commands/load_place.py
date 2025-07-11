@@ -21,7 +21,6 @@ class Command(BaseCommand):
         if json_url.startswith('http'):
             response = requests.get(json_url)
             response.raise_for_status()
-            print(response.text)
             data = response.json()
         else:
             with open(json_url, 'r', encoding='utf-8') as f:
