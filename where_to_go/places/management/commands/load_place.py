@@ -28,7 +28,7 @@ class Command(BaseCommand):
                 payload = json.load(f)
 
         try:
-            place, created = Place.objects.get_or_create(
+            place, created = Place.objects.update_or_create(
                 title=payload['title'],
                 defaults={
                     'short_description': payload.get('description_short', ''),
@@ -43,13 +43,6 @@ class Command(BaseCommand):
                 'Проверьте уникальность названий!'
             ))
             return
-
-        if not created:
-            place.short_description = payload.get('description_short', '')
-            place.long_description = payload.get('description_long', '')
-            place.lat = payload['coordinates']['lat']
-            place.lng = payload['coordinates']['lng']
-            place.save()
 
         for idx, img_url in enumerate(payload.get('imgs', []), start=1):
             img_response = requests.get(img_url)
