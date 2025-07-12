@@ -33,7 +33,7 @@ def place_details(request, place_id):
     images = place.images.order_by('order')
     imgs = [img.image.url for img in images]
 
-    data = {
+    payload = {
         'title': place.title,
         'imgs': imgs,
         'description_short': place.short_description,
@@ -43,7 +43,7 @@ def place_details(request, place_id):
             'lng': place.lng,
         }
     }
-    return JsonResponse(data, json_dumps_params={'ensure_ascii': False, 'indent': 2})
+    return JsonResponse(payload, json_dumps_params={'ensure_ascii': False, 'indent': 2})
 
 
 def place_title(request, place_id):
