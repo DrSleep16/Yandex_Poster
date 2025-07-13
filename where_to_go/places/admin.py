@@ -6,7 +6,7 @@ from .models import Place, PlaceImage
 
 class PlaceImageInline(SortableInlineAdminMixin, admin.TabularInline):
     model = PlaceImage
-    extra = 1
+    extra = 0
     readonly_fields = ['get_preview']
     fieldsets = (
         (None, {
