@@ -10,7 +10,7 @@ class PlaceImageInline(SortableInlineAdminMixin, admin.TabularInline):
     readonly_fields = ['get_preview']
     fieldsets = (
         (None, {
-            'fields': ('image', 'get_preview')
+            'fields': ('image', 'get_preview', 'order')
         }),
     )
 
