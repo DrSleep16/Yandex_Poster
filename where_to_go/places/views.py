@@ -33,7 +33,7 @@ def place_details(request, place_id):
     images = place.images.order_by('order')
     imgs = [img.image.url for img in images]
 
-    place_serialized = {
+    serialized_place = {
         'title': place.title,
         'imgs': imgs,
         'description_short': place.short_description,
